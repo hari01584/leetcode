@@ -1,3 +1,4 @@
+//HSMP
 struct Node{
     int key;
     int value;
@@ -7,7 +8,7 @@ struct Node{
 };
 class MyHashMap {
 public:
-    const static int H_SIZE = 997;
+    const static int H_SIZE = 1024;
     Node* map[H_SIZE];
     
     MyHashMap() {
@@ -76,7 +77,7 @@ public:
         }
     }
     
-    int hash(int index){
+    int hash(int index){ //Hashing function
         return index % (H_SIZE);
     }
 };
