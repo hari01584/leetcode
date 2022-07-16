@@ -13,27 +13,25 @@ class Solution {
     List<String> wordDict;
     int[] dp;
     
-    boolean solved = false;
     boolean wbreak(int n){
-        if(n >= str.length()) return solved = true;
+        if(n >= str.length()) return true;
         
         if(dp[n] != -1) return dp[n] == 1;
-        
-        boolean bs = false;
+
         for(int i=n; i<str.length(); i++){
             String subst = str.substring(n, i+1);
             // System.out.println(subst+" ");
             
             if(wordDict.contains(subst)){
                 boolean r = wbreak(i+1);
-                // dp[n] = r?1:0;
-                // return r;
-                if(!bs) bs = true;
+                if(!r) continue; // Skip in case the future solution fails to solve the problem.
+                dp[n] = r?1:0;
+                return r;
             }
         }
         
-        dp[n] = bs?1:0;;
-        return bs;
+        dp[n] = 0;
+        return false;
     }
     
     public boolean wordBreak(String s, List<String> wordDict) {
@@ -41,8 +39,6 @@ class Solution {
         this.wordDict =  wordDict;
         this.dp = new int[s.length()];
         Arrays.fill(dp, -1);
-        wbreak(0);
-        
-        return solved;
+        return wbreak(0);
     }
 }
