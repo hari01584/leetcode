@@ -1,60 +1,90 @@
 /*
-explanation: needle in a haystack using Z algorithm! It works on the principal of z pattern search algorithm (ref. https://www.geeksforgeeks.org/z-algorithm-linear-time-pattern-searching-algorithm/) where we try to create a Z array of needle$haystack string and finds the places where the value of element in Z array is equal to length of needle! When we find it we will return the estimated position of this element in original haystack by substracting length of extra characters (ie len(needle)+1)!
+explanation: implementation of strStr using KMP (Knuth Morris Pratt) Pattern Searching algorithm! the program in general follows the implementation of https://www.youtube.com/watch?v=GTJr8OvyEVQ (Tushar Roy's Video!) comments in various places are inserted to make the code easier to understand!
 
 testcase:
 "hello"
 "ll" -> Works
 
-Time & Space Complexity: O(n) & O(n): Time and space complexity of Z algorithm is linear therefore our program has the same TC and SC!
+Time & Space Complexity: O(n) & O(n): We already know that kmp algorithm has linear time and space complexity, therefore the time and space complexity of this program is also the same!
 */
 
 class Solution {
-    int[] calcZ(String str){
-        int[] ret = new int[str.length()];
-        ret[0] = 0;
-        int L = 0;
-        int R = 0;
-        
-        for(int i=1; i<str.length(); i++){
-            if(i > R){
-                L = R = i;
-                while(R < str.length() && str.charAt(R) == str.charAt(R-L)){
-                    R++;
-                }
-                ret[i] = R - L;
-                R--;
+    public int[] preprocess(String pattern){
+        // Preprocess function, ie generate the pattern lps array!
+        int[] lps = new int[pattern.length()];
+        boolean isLastMatch = false;
+        int i = 0;
+        int j = 1;
+        lps[0] = 0;
+        while(j < pattern.length()){
+            // System.out.println(pattern.charAt(i)+" "+pattern.charAt(j));
+            if(pattern.charAt(j) == pattern.charAt(i)){
+                lps[j] = i+1;
+                // System.out.println("set "+j+" "+lps[j]);
+                j++; i++;
+                isLastMatch = true;
             }
             else{
-                // Windows
-                // System.out.println("Window f "+L+" "+R);
-                int pcache = ret[i-L];
-                if(i + pcache > R){
-                    // System.out.println("Recalc windows "+str.charAt(i));
-                    L = i;
-                    while(R < str.length() && str.charAt(R) == str.charAt(R-L)){
-                        R++;
-                    }
-                    ret[i] = R - L;
-                    R--;
-                } 
-                else {
-                    ret[i] = pcache;
+                if(isLastMatch){
+                    // System.out.println("Rewind");
+                    while(i>0 && pattern.charAt((i=lps[--i])) != pattern.charAt(j));
+                    // System.out.println("Rew "+pattern.charAt(i)+" "+pattern.charAt(j)+" "+i+" "+j);
+
+//                     if(pattern.charAt(j) == pattern.charAt(i)){
+//                         lps[j++] = i + 1;
+//                         i++;
+//                     }
+//                     else{
+//                         lps[j++] = 0;
+//                     }
+                    
+                    isLastMatch = false;
                 }
+                else lps[j++] = 0;
             }
-            
-            // System.out.println(i+" "+L+" "+R);
         }
         
-        // System.out.println(Arrays.toString(ret));
-        return ret;
+        // System.out.println(Arrays.toString(lps));
+        
+        return lps;
     }
+    
     public int strStr(String haystack, String needle) {
-        int[] z = calcZ(needle+"$"+haystack);
-        for(int i=0; i<z.length; i++){
-            if(z[i] == needle.length()){
-                return i - needle.length() - 1;
+        int[] lps = preprocess(needle);
+        System.out.println(Arrays.toString(lps));
+        
+        int i=0;
+        int j=0;
+        
+        boolean lastmatch = false;
+        
+        while(i<haystack.length()){
+            // System.out.println("comparing "+haystack.charAt(i)+" with "+needle.charAt(j)+" "+i+" "+j);
+            
+            if(haystack.charAt(i)==needle.charAt(j)){
+                i++;
+                j++;
+                lastmatch = true;
+                
+                if(j>=needle.length()){
+                    // System.out.println("match found");
+                    return i - needle.length();
+                }
+            }
+            else{
+                if(lastmatch){
+                    j = lps[j-1];
+                    while(j>0 && haystack.charAt(i)!=needle.charAt(j)){
+                        j = lps[j-1];
+                    }
+                }
+                else{
+                    i++;
+                }
+                lastmatch = false;
             }
         }
+        
         return -1;
     }
 }
