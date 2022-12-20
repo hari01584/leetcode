@@ -1,4 +1,10 @@
+/*
+explanation: odd even linked list using traversal techniques! The program works by simply setting the next pointer of previous node to the next node of current iterating list, we do this for all elements except the last node, to which we manually configure next by comparing length of list!
 
+testcase: [1,2,3,4,5] -> Works
+
+Time & Space Complexity: O(n) & O(1): time complexity of this program is linear while space complexity is constant! (Due to use of linkedlist)
+*/
 /**
  * Definition for singly-linked list.
  * public class ListNode {
