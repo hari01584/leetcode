@@ -15,6 +15,7 @@ class Solution {
             if(reach[i]){
                 for(int j=i+1; j<=Math.min(nums.length-1, i+nums[i]); j++){
                     reach[j] = true;
+                    if(j == reach.length-1) return true;
                 }
             }
         }
