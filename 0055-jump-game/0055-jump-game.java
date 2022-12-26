@@ -7,20 +7,18 @@ Time & Space Complexity: O(n^2) & O(n): Time complexity is quadratic because eac
 */
 class Solution {
     public boolean canJump(int[] nums) {
-        boolean[] reach = new boolean[nums.length]; // Reachability array!
-        reach[0] = true; // First element is automatically reachable!
-        
-        for(int i=0; i<reach.length; i++){
-            // If this (current) element is reachable then set reachability of all elements possible to reach by this to be true!
-            if(reach[i]){
-                for(int j=i+1; j<=Math.min(nums.length-1, i+nums[i]); j++){
-                    reach[j] = true;
-                    if(j == reach.length-1) return true;
-                }
+        int target = nums.length-1;
+        for(int i=nums.length-2; i>=0; i--){
+            // Check if current element at any jump can reach next closest possible target!
+            if(i+nums[i] >= target){
+                // Yes it is reachable! Now the target becomes i!
+                target = i;
+            } else {
+                // Not reachable by current number, maybe the previous number can reach it? perhaps??
+                if(i==0) return false;
             }
         }
         
-        // Finally return reachability of last element, if this is true => can be reached, else not!
-        return reach[reach.length-1];
+        return true;
     }
 }
