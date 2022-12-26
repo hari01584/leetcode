@@ -35,6 +35,8 @@ class Solution {
             return dp[n] = new J(sz, sz, sz, sz);
         }
         
+        if(dp[n] != null) return dp[n];
+        
         // Recursively choose this stone for forward/backward wrt to next stones!
         J next = dyjump(n+1);
         // System.out.println("at n="+stones[n]+" JNext:"+next);
